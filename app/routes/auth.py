@@ -43,6 +43,6 @@ def login(user_credentials:OAuth2PasswordRequestForm = Depends(), db: Session = 
     access_token = oauth2.access_token_creation(data = {"username":user_credentials.username}) #Scope of the data I am providing currently is "Id" so 
 
     
-    return {"token":access_token,"token_type":"bearer"}
+    return {"access_token":access_token,"token_type":"bearer"}
 
         
