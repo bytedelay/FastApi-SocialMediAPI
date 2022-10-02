@@ -30,3 +30,14 @@ class Users(Base):
     created_at = Column(TIMESTAMP(timezone=True),server_default = text('now()'), nullable = False)
 
 
+class Likes(Base):
+    __tablename__ = "likes"
+
+    posts_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"),primary_key = True)
+    author_mail = Column(String, ForeignKey("users.email"),primary_key = True)
+
+class DisLikes(Base):
+    __tablename__ = "dislikes"
+
+    posts_id = Column(Integer, ForeignKey("posts.id", ondelete="CASCADE"),primary_key = True)
+    author_mail = Column(String, ForeignKey("users.email"),primary_key = True)

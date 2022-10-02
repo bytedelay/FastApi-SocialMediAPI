@@ -1,4 +1,4 @@
-from pydantic import BaseModel,EmailStr
+from pydantic import BaseModel,EmailStr,conint
 from datetime import datetime
 from typing import Optional
 
@@ -55,11 +55,15 @@ class Respond(POSTBase): #Inheriting to avoid re-structuring and with this we ha
         orm_mode = True #this skips the error as pydantic model understands it's a sqlalchemy
 
 
-
-
 #Looks similar but as a repsonse we also got hidden parameters earlier now we would be skipping that.
 
+class Like(BaseModel):
+    posts_id : int
+    dir: conint(ge=0,le=1) #used for setting value between 0 and 1.
 
+class DisLike(BaseModel):
+    posts_id : int
+    dir: conint(ge=0,le=1) #used for setting value between 0 and 1.
 
 
 
