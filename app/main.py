@@ -1,7 +1,8 @@
 #from random import randrange
 
-from pydoc import describe
+
 from fastapi import FastAPI
+#from fastapi.staticfiles import StaticFiles
 
 
 #from fastapi.params import Body
@@ -12,10 +13,12 @@ from .routes import posts,users,auth,likes,dislikes
 from .confg import settings  #used for encrypting values for protection 
 from fastapi.middleware.cors import CORSMiddleware
 
+
 models.Base.metadata.create_all(bind=engine)
 
 
 described = """
+<h1>-----------------------------------------------------------------------------------------------------------------<img src="https://lh3.googleusercontent.com/McdS2RqVbNT2_JFjpTNQRXKFPebQ5GfzdtyuBAL7y2OoezBlSl-gttiq4qp16hvcaGqUVz2A3XMSF-mcDv5qJ9MDbecrlUscq3cYOhPhyoxoZwbgpFMFSLKWkUu3yymyBoneuwSzTA=w2400" alt="Logo" width="69" height="100"/></h1>
 
 # Current Functionalities
 
@@ -32,18 +35,22 @@ described = """
 * **Update posts**
 * **Delete posts**
 * **Simultaneously Like and Dislike posts**
+* **Likes Count**
 
 ## Features to be added:
 
-* **Count Likes and DisLikes**
 * **Add Comments**
 * **Follow/UnFollow Users**
+
+<h1>-----------------------------------------------------------------------------------------------------------------</h1>
 
 """
 
 app = FastAPI(title="ByteDelay's Social Media API",
     description=described,
-    version="0.0.5")
+    version="0.0.6")
+
+#app.mount("/static", StaticFiles(directory="static"), name="static")
 
 #origins = ["https://www.google.com"] #Cross-Origin Resource Sharing # to be restrictive
 origins = ["*"]  #for all websites 

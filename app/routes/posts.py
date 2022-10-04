@@ -1,6 +1,7 @@
 from ..import models,schemas,oauth2
 from ..database import  get_db
 from sqlalchemy.orm import Session
+from sqlalchemy import func #gives access to count
 from fastapi import Response, status, HTTPException,APIRouter,Depends
 from typing import List, Optional
 
@@ -12,26 +13,35 @@ router = APIRouter(
 
 
 #fetching multiple posts now alchemy
-@router.get("/", response_model = List[schemas.Respond])
+#@router.get("/", response_model = List[schemas.Respond])
+@router.get("/", response_model = List[schemas.LikesDisplay])
 def get_posts(db: Session = Depends(get_db), user_username:str =Depends(oauth2.get_current_user), limit :int = 10, skip: int = 0,
 search: Optional[str] = ""): 
     #{{URL}}posts?limit=3 to use the feature
     #Limit adds limit to content default 10 unless user changes
     #posts = db.query(models.Post).filter(models.Post.owner_mailid == user_username)).all()   
-    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all() #limits the post
+    posts = db.query(models.Post) #limits the post
+    #posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all() #limits the post
     #for searching content with spaces in between titles add %20.
     #Adding skip to skip particular posts
     #using offset to use skip feature.
     #helps in pagination
-    return posts #stores the data in lists of dictionary
+    #results = db.query(models.Post,func.count(models.Likes.posts_id).label("no_of_likes")).join(models.Likes,models.Likes.posts_id == models.Post.id,isouter = True).group_by(models.Post.id).all() #default inner join. #add parameter isouter = True
+    results = db.query(models.Post,func.count(models.Likes.posts_id).label("no_of_likes")
+    ).join(models.Likes,models.Likes.posts_id == models.Post.id,isouter = True).group_by(models.Post.id
+    ).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all() #default inner join. #add parameter isouter = True
+    #print(results) #rename by adding .label("name")
+    return results #stores the data in lists of dictionary
 
 
 
 
 #fetching a single post
-@router.get('/{id}', response_model = schemas.Respond)
+@router.get('/{id}', response_model = schemas.LikesDisplay)
 def get_post(id : int,db: Session = Depends(get_db), user_username:str =Depends(oauth2.get_current_user) ):
-    fetched_post = db.query(models.Post).filter(models.Post.id == id).first() #using first cos using all() would search the entire db
+    #fetched_post = db.query(models.Post).filter(models.Post.id == id).first()
+    fetched_post = db.query(models.Post,func.count(models.Likes.posts_id).label("no_of_likes")
+    ).join(models.Likes,models.Likes.posts_id == models.Post.id,isouter = True).group_by(models.Post.id).filter(models.Post.id == id).first() #using first cos using all() would search the entire db
     if not fetched_post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"The id:{id} is not found")
     return fetched_post

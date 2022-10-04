@@ -10,7 +10,7 @@ router = APIRouter(prefix = '/like', tags=['LIKE'])
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def likeness(vote:schemas.Like, db: Session = Depends(database.get_db), user_username:str=Depends(oauth2.get_current_user)):
 
-    post_presence = db.query(models.Likes).filter(models.Post.id == vote.posts_id)
+    post_presence = db.query(models.Likes).filter(models.Post.id == vote.posts_id).first()
 
     if not post_presence:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)

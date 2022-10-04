@@ -16,6 +16,7 @@ class POSTBase(BaseModel):  #class POST extending imported BaseModel from pydant
 class POSTCreate(POSTBase): #Inheritance
     pass 
 
+
 class UserCreate(BaseModel): #for creating user schema
     email:EmailStr
     password:str
@@ -54,6 +55,12 @@ class Respond(POSTBase): #Inheriting to avoid re-structuring and with this we ha
     class Config:
         orm_mode = True #this skips the error as pydantic model understands it's a sqlalchemy
 
+class LikesDisplay(BaseModel): #changing inheritance and declaring separate model.
+    Post:Respond
+    no_of_likes:int
+
+    class Config:
+        orm_mode = True
 
 #Looks similar but as a repsonse we also got hidden parameters earlier now we would be skipping that.
 
