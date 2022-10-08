@@ -1,11 +1,10 @@
 
-from ..import schemas,database,oauth2,models,database
+from ..import schemas,database,oauth2,models
 from sqlalchemy.orm import Session
 from fastapi import status, HTTPException,APIRouter,Depends
 
+router = APIRouter(prefix = '/like', tags=['Add Likes/Remove Likes'])
 
-router = APIRouter(prefix = '/like', tags=['LIKE'])
-#do not keep "filename.py" and functionname.py same
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def likeness(vote:schemas.Like, db: Session = Depends(database.get_db), user_username:str=Depends(oauth2.get_current_user)):
@@ -16,12 +15,11 @@ def likeness(vote:schemas.Like, db: Session = Depends(database.get_db), user_use
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
     like_check = db.query(models.Likes).filter(models.Likes.posts_id == vote.posts_id, 
-        models.Likes.author_mail == user_username.email)#checking if already voted.#Second condition mail check
+        models.Likes.author_mail == user_username.email)
     liked = like_check.first()
 
     if (vote.dir==1):
         if liked:
-            #print(user_username.email.split('@')[0])
             raise HTTPException(status_code=status.HTTP_409_CONFLICT,
             detail=f"The current user {user_username.email.split('@')[0]} has already liked the post {vote.posts_id}")
             

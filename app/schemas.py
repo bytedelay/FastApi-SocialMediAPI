@@ -1,76 +1,73 @@
+
 from pydantic import BaseModel,EmailStr,conint
 from datetime import datetime
 from typing import Optional
 
-
-
-class POSTBase(BaseModel):  #class POST extending imported BaseModel from pydantic
+class POSTBase(BaseModel):
     title:str
     content:str
-    #adding new methods
-    is_published:bool = True #default true
-    #owner: RespondUser  #pydantic data form
+    is_published:bool = True
 
-
-#These two controls what client sends or requests
-class POSTCreate(POSTBase): #Inheritance
+class POSTCreate(POSTBase):
     pass 
 
-
-class UserCreate(BaseModel): #for creating user schema
+class UserCreate(BaseModel):
     email:EmailStr
     password:str
 
 class UserLogin(BaseModel):
-
     email:EmailStr
     password:str
 
 class Token(BaseModel):
-
     access_token:str
     token_type:str
 
 class TokenData(BaseModel):
-    #id: int
     email: Optional[str]
 
-#Response control #This dictates what we send as a response for client stuff
 class RespondUser(BaseModel):
     id:int
     email:EmailStr
-    #password:str
     created_at:datetime
 
     class Config:
-        orm_mode = True   #Moved RespondUser up cos it wasn't declared yet.
+        orm_mode = True  
         
-class Respond(POSTBase): #Inheriting to avoid re-structuring and with this we have more control.#issues with that
+class Respond(POSTBase): 
     id:int    
     created_at:datetime
-    #email: Optional[str]
     owner_mailid:str
     owner: RespondUser
 
     class Config:
-        orm_mode = True #this skips the error as pydantic model understands it's a sqlalchemy
+        orm_mode = True 
 
-class LikesDisplay(BaseModel): #changing inheritance and declaring separate model.
+class LikesDisplay(BaseModel): 
     Post:Respond
     no_of_likes:int
 
     class Config:
         orm_mode = True
 
-#Looks similar but as a repsonse we also got hidden parameters earlier now we would be skipping that.
 
 class Like(BaseModel):
     posts_id : int
-    dir: conint(ge=0,le=1) #used for setting value between 0 and 1.
+    dir: conint(ge=0,le=1) 
 
 class DisLike(BaseModel):
     posts_id : int
-    dir: conint(ge=0,le=1) #used for setting value between 0 and 1.
+    dir: conint(ge=0,le=1) 
+
+class Comments(BaseModel):
+    posts_id : int
+    comments : str
+
+class Follows(BaseModel):
+    user_id : int
+    dir: conint(ge=0, le=1)
+
+
 
 
 

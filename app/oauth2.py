@@ -6,19 +6,14 @@ from sqlalchemy.orm import Session
 from . import schemas,database,models
 from .confg import settings
 
-oath2_scheme  = OAuth2PasswordBearer(tokenUrl='login') #pass the path except /
-#Secret Key
-#Algorithm 
-#Expiration Time
+oath2_scheme  = OAuth2PasswordBearer(tokenUrl='login') 
 
-# to get a string like this run:
-# openssl rand -hex 32
 SECRET_KEY = settings.secret_key
 ALGORITHM = settings.algorithm
 ACCESS_TOKEN_EXPIRE_MINUTES = settings.access_token_expire_minutes
 
 def access_token_creation(data:dict):
-    to_encode = data.copy() #making a copy of dictionary so updates don't hurt original
+    to_encode = data.copy() 
 
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp":expire})

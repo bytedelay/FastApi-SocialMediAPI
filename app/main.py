@@ -1,16 +1,10 @@
-#from random import randrange
-
 
 from fastapi import FastAPI
-#from fastapi.staticfiles import StaticFiles
 
-
-#from fastapi.params import Body
-#import datetime
 from . import models
 from .database import  engine
-from .routes import posts,users,auth,likes,dislikes
-from .confg import settings  #used for encrypting values for protection 
+from .routes import posts,users,auth,likes,dislikes,comments,follows
+from .confg import settings  
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -36,11 +30,13 @@ described = """
 * **Delete posts**
 * **Simultaneously Like and Dislike posts**
 * **Likes Count**
+* **Added Follow/unFollow Users**
+* **Added Comments**
 
 ## Features to be added:
 
-* **Add Comments**
-* **Follow/UnFollow Users**
+* **Comments Deletion Option**
+* **Comments returned as list of comments for user**
 
 <h1>-----------------------------------------------------------------------------------------------------------------</h1>
 
@@ -48,12 +44,9 @@ described = """
 
 app = FastAPI(title="ByteDelay's Social Media API",
     description=described,
-    version="0.0.6")
+    version="0.0.7")
 
-#app.mount("/static", StaticFiles(directory="static"), name="static")
-
-#origins = ["https://www.google.com"] #Cross-Origin Resource Sharing # to be restrictive
-origins = ["*"]  #for all websites 
+origins = ["*"]  
 
 app.add_middleware(
     CORSMiddleware,
@@ -69,9 +62,11 @@ app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(likes.router)
 app.include_router(dislikes.router)
+app.include_router(comments.router)
+app.include_router(follows.router)
 
 
-@app.get("/", tags=["Root"])   #used for name change in docs 
+@app.get("/", tags=["Root"])   
 def root(): 
     return {"message": "Hail Hydra API"}
 
